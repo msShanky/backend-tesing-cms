@@ -1,0 +1,231 @@
+drop database if exists Cmsskii;
+create database Cmsskii;
+use Cmsskii;
+
+drop table if exists Shelf;
+drop table if exists Rack;
+drop table if exists RackType;
+drop table if exists `User`;
+drop table if exists UserRole;
+drop table if exists ProductStoreDetails;
+drop table if exists SetListProduct;
+drop table if exists ProductRecommendation;
+drop table if exists ProductTranslation;
+drop table if exists `Language`;
+drop table if exists ProductLabel;
+drop table if exists Product;
+drop table if exists SKU;
+drop table if exists Store;
+drop table if exists Currency;
+drop table if exists SizeUnits;
+
+create table Currency(
+	currencyID int not null auto_increment,
+    `name` varchar(60),
+    `value` varchar(100),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (currencyID)
+);
+
+create table SizeUnits(
+	sizeUnitsID int not null auto_increment,
+    `name` varchar(60),
+    `value` varchar(100),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (sizeUnitsID)
+);
+
+create table Store (
+	storeID int not null auto_increment,
+    `name` varchar(60) not null,
+    location varchar(100) not null,
+    `status` tinyint,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (storeID)
+);
+
+create table RackType (
+	rackTypeID int not null auto_increment,
+    `name` varchar(50) not null,
+	createdAt timestamp default CURRENT_TIMESTAMP,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (rackTypeID)
+);
+
+create table Rack (
+	rackID int not null auto_increment,
+    `rows` int not null,
+    `columns` int not null,
+    storeID int not null,
+    rackTypeID int not null,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (rackID),
+    foreign key (rackTypeID) references RackType(rackTypeID),
+    foreign key (storeID) references Store (storeID)
+);
+
+create table Shelf (
+	shelfID int not null auto_increment,    
+    `name` varchar(60),
+    width int not null,
+    rowId int not null,
+    columnID int not null,
+    rackID int not null,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+	primary key (shelfID),
+    foreign key (rackID) references Rack(rackID)
+);
+
+create table UserRole(
+	userRoleID int not null auto_increment,
+    `name` varchar(60),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (userRoleID)
+);
+
+create table `User`(
+	userID int not null auto_increment,
+    firstName varchar(60) not null,
+    lastName varchar(60) not null,
+    email varchar(100),
+    `password` varchar(150),
+    `status` tinyint,
+    roleID int not null,
+    storeID int not null,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (userID),
+    foreign key (roleID) references UserRole(userRoleID),
+    foreign key (storeID) references Store(storeID)
+);
+
+create table Product (
+	productID int not null auto_increment,
+	isSet tinyint,
+    rating int,
+    image_name varchar(100),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (productID)
+);
+
+create table SKU (
+	SKUID int not null auto_increment,
+    productID int not null,
+    rfid double,
+    wayfinder_ip varchar(100),
+    wayfinder_address varchar(100),
+    gcas double,
+    size int,
+    sizeUnitsID int,
+    width int,
+    currencyID int,
+    price float,
+    bestSeller tinyint,
+    mainVarient tinyint,
+    image1FileName varchar(150),
+    image2FileName varchar(150),
+    image3FileName varchar(150),
+    image4FileName varchar(150),
+    image5FileName varchar(150),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (SKUID),    
+    foreign key (currencyID) references Currency (currencyID),
+	foreign key (sizeUnitsID) references SizeUnits (sizeUnitsID)
+);
+
+create table ProductLabel(
+	productLabelID int not null auto_increment,
+    productID int,
+    isBefore tinyint,
+    useSKUID int,
+    useLabel varchar(120),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+	primary key (productLabelID),
+	foreign key (useSKUID) references SKU (SKUID)
+);
+
+create table `Language`(
+	languageID int not null auto_increment,
+    `name` varchar(100),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),    
+    primary key (languageID)
+);
+
+create table ProductTranslation(
+	productTranslationID int not null auto_increment,
+    productID int,
+    languageID int,
+    `name` varchar(100),
+    multilineName varchar(200),
+    description varchar(200),
+    lineup varchar(100),
+    benefits varchar(150),
+    subtitle varchar(100),
+    tagline varchar(100),    
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+	primary key (productTranslationID),
+	foreign key (languageID) references `Language` (languageID)
+);
+
+create table ProductRecommendation(
+	productRecommendationID int not null auto_increment,
+    primarySKUID int,
+    recommendedSKUID int,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (productRecommendationID),
+    foreign key (primarySKUID) references SKU (SKUID),
+    foreign key (recommendedSKUID) references SKU (SKUID)
+);
+
+create table SetListProduct(
+	setListProductID int not null auto_increment,
+    productID int,
+    SKUID int,
+    quantity int,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (setListProductID),
+    foreign key (productID) references Product (productID),
+    foreign key (SKUID) references SKU (SKUID)
+);
+
+create table ProductStoreDetails(
+	productStoreDetailsID int not null auto_increment,
+    unitPrice float,    
+    quantity int,
+    currencyID int,
+    storeID int,
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (productStoreDetailsID),
+    foreign key (currencyID) references Currency (currencyID),
+    foreign key (storeID) references Store (storeID)
+);
