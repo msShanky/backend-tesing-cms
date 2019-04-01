@@ -1,0 +1,22 @@
+use Cmsskii;
+
+# Country
+
+insert into Country (`name`, `code`) values ('Singapore', 'SG');
+insert into Country (`name`, `code`) values ('United States', 'US');
+
+# Currency
+
+insert into Currency (`currencyID`, `countryID`, `name`) values ('SGD', 1,'Singapore Dollors');
+insert into Currency (`currencyID`, `countryID`, `name`) values ('USD', 2,'US Dollors');
+
+# SizeUnits
+
+insert into SizeUnits (`name`, `value`) values ('Millilitere', 'ML');
+insert into SizeUnits (`name`, `value`) values ('Gram', 'G');
+insert into SizeUnits (`name`, `value`) values ('Pieces', 'PS');
+
+# Store
+
+insert into Store (countryID,`name`,`status`) values (1,'Alpha Store', true);
+insert into Store (countryID,`name`,`status`) values (2,'Beta Store', true);
