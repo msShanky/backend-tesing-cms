@@ -29,8 +29,17 @@ create table Country(
     primary key (countryID)
 );
 
+create table `Language`(
+	languageID int not null auto_increment,
+    `name` varchar(100),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),    
+    primary key (languageID)
+);
+
 create table Currency(
-	currencyID varchar(15) not null auto_increment,
+	currencyID varchar(15) not null,
     countryID int not null,
     `name` varchar(60),
 	createdAt timestamp default current_timestamp,
@@ -38,6 +47,16 @@ create table Currency(
     updatedBy varchar(60),
     primary key (currencyID),
     foreign key (countryID) references Country (countryID)
+);
+
+create table CurrencyTranslation(
+	currencyTranslationID int not null auto_increment,
+    currencyID varchar(15) not  null,
+    languageID int not null,
+    label varchar(50),
+    primary key(currencyTranslationID),
+    foreign key (currencyID) references Currency (currencyID),
+    foreign key (languageID) references `Language` (languageID)
 );
 
 create table SizeUnits(
@@ -48,6 +67,16 @@ create table SizeUnits(
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
     primary key (sizeUnitsID)
+);
+
+create table SizeUnitsTranslation(
+	sizeUnitsTranslationID int not null auto_increment,
+    sizeUnitsID int not  null,
+    languageID int not null,
+    label varchar(50),
+    primary key(sizeUnitsTranslationID),
+    foreign key (sizeUnitsID) references SizeUnits (sizeUnitsID),
+    foreign key (languageID) references `Language` (languageID)
 );
 
 create table Store (
@@ -176,15 +205,6 @@ create table ProductLabel(
     updatedBy varchar(60),
 	primary key (productLabelID),
 	foreign key (useSKUID) references SKU (SKUID)
-);
-
-create table `Language`(
-	languageID int not null auto_increment,
-    `name` varchar(100),
-	createdAt timestamp default current_timestamp,
-    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    updatedBy varchar(60),    
-    primary key (languageID)
 );
 
 create table ProductTranslation(
