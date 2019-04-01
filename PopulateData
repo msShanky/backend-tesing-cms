@@ -5,18 +5,88 @@ use Cmsskii;
 insert into Country (`name`, `code`) values ('Singapore', 'SG');
 insert into Country (`name`, `code`) values ('United States', 'US');
 
+# Language 
+
+insert into `Language`(`name`) values ('English');
+insert into `Language`(`name`) values ('Chinese');
+
 # Currency
 
 insert into Currency (`currencyID`, `countryID`, `name`) values ('SGD', 1,'Singapore Dollors');
 insert into Currency (`currencyID`, `countryID`, `name`) values ('USD', 2,'US Dollors');
 
+# CurrencyTranslation
+
+insert into CurrencyTranslation (currencyID, languageID, label) values ('SGD', 1,'SGD');
+# insert into CurrencyTranslation (currencyID, languageID, label) values ('SGD', 2,'新币');
+
 # SizeUnits
 
-insert into SizeUnits (`name`, `value`) values ('Millilitere', 'ML');
-insert into SizeUnits (`name`, `value`) values ('Gram', 'G');
-insert into SizeUnits (`name`, `value`) values ('Pieces', 'PS');
+insert into SizeUnits (`name`) values ('Millilitere');
+insert into SizeUnits (`name`) values ('Gram');
+insert into SizeUnits (`name`) values ('Pieces');
+
+# SizeUnitsTranslation
+
+insert into SizeUnitsTranslation (sizeUnitsID, languageID, label) values (1, 1, 'ML');
+# insert into SizeUnitsTranslation (sizeUnitsID, languageID, label) values (1, 2, '毫升');
+insert into SizeUnitsTranslation (sizeUnitsID, languageID, label) values (2, 1, 'G');
+# insert into SizeUnitsTranslation (sizeUnitsID, languageID, label) values (2, 2, '克');
+insert into SizeUnitsTranslation (sizeUnitsID, languageID, label) values (3, 1, 'PCS');
 
 # Store
 
 insert into Store (countryID,`name`,`status`) values (1,'Alpha Store', true);
 insert into Store (countryID,`name`,`status`) values (2,'Beta Store', true);
+
+# RackType
+
+insert into RackType (`name`) values ('Gondola');
+insert into RackType (`name`) values ('BackWall');
+
+# Rack
+
+insert into Rack (`rows`, `columns`, storeID, rackTypeID) values (3, 3, 1, 1);
+insert into Rack (`rows`, `columns`, storeID, rackTypeID) values (3, 3, 1, 1);
+insert into Rack (`rows`, `columns`, storeID, rackTypeID) values (4, 3, 1, 2);
+
+# Shelf 
+
+# insert into Shelf (`name`, width, height, rowID, columnID, rackID) values ()
+
+# UserRole
+
+insert into UserRole (`name`, `code`) values ('Beauty Consultant', 'BC');
+insert into UserRole (`name`, `code`) values ('MS and P', 'MS&P');
+insert into UserRole (`name`, `code`) values ('Admin', 'ADMIN');
+insert into UserRole (`name`, `code`) values ('IT Technition', 'IT');
+
+# USER
+insert into `User` 
+(firstName, lastName, email, `password`, `status`, numberOfTries, roleID, storeID) 
+values ('Shankara', 'Narayanan', 'shankaranarayanan.m.s@gmail.com', '', true, 0, 1, 1);
+
+# Product
+
+insert into Product(isSet, rating,rfid, imageName) values (false, 4, 4567487987654, '');
+
+# SKU
+
+insert into 
+SKU(productID, wayfinderIP, wayfinderAddress, gcas, size, sizeUnitsID, width, height, price, bestseller, mainvarient) 
+values (1, '172.10.1.45', 'asd10293lkasjdd2', 45498765421325, 120, 1, 60.5, 50.2, 257, true, true);
+
+# ProductLabel
+
+insert into ProductLabel(productID, isBefore, useSKUID, useLabel) values (1, true, 1, 'Use this before to avoid poisoning');
+
+# ProductTranslation
+
+insert into ProductTranslation (productID, languageID,`name`) values (1, 1, 'Awesome Product to eat');
+
+# ProductStoreDetails
+
+insert into ProductStoreDetails (unitPrice,quantity, storeID, SKUID ) values (120, 5, 1, 1);
+
+
+
