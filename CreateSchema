@@ -19,14 +19,25 @@ drop table if exists Store;
 drop table if exists Currency;
 drop table if exists SizeUnits;
 
-create table Currency(
-	currencyID int not null auto_increment,
-    `name` varchar(60),
-    `value` varchar(100),
+create table Country(
+	countryID int not null auto_increment,
+    `name` varchar(150),
+    `code` varchar(15),
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
-    primary key (currencyID)
+    primary key (countryID)
+);
+
+create table Currency(
+	currencyID varchar(15) not null auto_increment,
+    countryID int not null,
+    `name` varchar(60),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
+    primary key (currencyID),
+    foreign key (countryID) references Country (countryID)
 );
 
 create table SizeUnits(
@@ -41,13 +52,15 @@ create table SizeUnits(
 
 create table Store (
 	storeID int not null auto_increment,
-    `name` varchar(60) not null,
-    location varchar(100) not null,
+    countryID int not null,
+    `name` varchar(60) not null,    
     `status` tinyint,
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
-    primary key (storeID)
+    primary key (storeID),
+    foreign key (countryID) references Country (countryID
+    )
 );
 
 create table RackType (
@@ -103,8 +116,9 @@ create table `User`(
     email varchar(100),
     `password` varchar(150),
     `status` tinyint,
+    numberOfTries int,
     roleID int not null,
-    storeID int not null,
+    storeID int not null,    
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
@@ -117,6 +131,7 @@ create table Product (
 	productID int not null auto_increment,
 	isSet tinyint,
     rating int,
+    rfid double,
     image_name varchar(100),
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -126,15 +141,14 @@ create table Product (
 
 create table SKU (
 	SKUID int not null auto_increment,
-    productID int not null,
-    rfid double,
+    productID int not null,    
     wayfinder_ip varchar(100),
     wayfinder_address varchar(100),
     gcas double,
     size int,
     sizeUnitsID int,
     width int,
-    currencyID int,
+    currencyID varchar(15),
     price float,
     bestSeller tinyint,
     mainVarient tinyint,
@@ -220,7 +234,7 @@ create table ProductStoreDetails(
 	productStoreDetailsID int not null auto_increment,
     unitPrice float,    
     quantity int,
-    currencyID int,
+    currencyID varchar(15),
     storeID int,
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
