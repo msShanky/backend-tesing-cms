@@ -54,6 +54,9 @@ create table CurrencyTranslation(
     currencyID varchar(15) not  null,
     languageID int not null,
     label varchar(50),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
     primary key(currencyTranslationID),
     foreign key (currencyID) references Currency (currencyID),
     foreign key (languageID) references `Language` (languageID)
@@ -62,7 +65,6 @@ create table CurrencyTranslation(
 create table SizeUnits(
 	sizeUnitsID int not null auto_increment,
     `name` varchar(60),
-    `value` varchar(100),
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
@@ -74,6 +76,9 @@ create table SizeUnitsTranslation(
     sizeUnitsID int not  null,
     languageID int not null,
     label varchar(50),
+	createdAt timestamp default current_timestamp,
+    updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedBy varchar(60),
     primary key(sizeUnitsTranslationID),
     foreign key (sizeUnitsID) references SizeUnits (sizeUnitsID),
     foreign key (languageID) references `Language` (languageID)
@@ -119,6 +124,7 @@ create table Shelf (
 	shelfID int not null auto_increment,    
     `name` varchar(60),
     width int not null,
+    height int not null,
     rowId int not null,
     columnID int not null,
     rackID int not null,
@@ -132,6 +138,7 @@ create table Shelf (
 create table UserRole(
 	userRoleID int not null auto_increment,
     `name` varchar(60),
+    `code` varchar(20),
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
@@ -158,10 +165,10 @@ create table `User`(
 
 create table Product (
 	productID int not null auto_increment,
-	isSet tinyint,
+	isSet tinyint,    
     rating int,
     rfid double,
-    image_name varchar(100),
+    imageName varchar(100),
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
@@ -171,13 +178,13 @@ create table Product (
 create table SKU (
 	SKUID int not null auto_increment,
     productID int not null,    
-    wayfinder_ip varchar(100),
-    wayfinder_address varchar(100),
+    wayfinderIP varchar(100),
+    wayfinderAddress varchar(100),
     gcas double,
     size int,
     sizeUnitsID int,
-    width int,
-    currencyID varchar(15),
+    width float,
+    height float,    
     price float,
     bestSeller tinyint,
     mainVarient tinyint,
@@ -189,8 +196,7 @@ create table SKU (
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
-    primary key (SKUID),    
-    foreign key (currencyID) references Currency (currencyID),
+    primary key (SKUID),
 	foreign key (sizeUnitsID) references SizeUnits (sizeUnitsID)
 );
 
@@ -253,13 +259,13 @@ create table SetListProduct(
 create table ProductStoreDetails(
 	productStoreDetailsID int not null auto_increment,
     unitPrice float,    
-    quantity int,
-    currencyID varchar(15),
-    storeID int,
+    quantity int,    
+    storeID int not null,
+    SKUID int not null,
 	createdAt timestamp default current_timestamp,
     updatedAt timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updatedBy varchar(60),
-    primary key (productStoreDetailsID),
-    foreign key (currencyID) references Currency (currencyID),
-    foreign key (storeID) references Store (storeID)
+    primary key (productStoreDetailsID),    
+    foreign key (storeID) references Store (storeID),
+    foreign key (SKUID) references SKU (SKUID)
 );
