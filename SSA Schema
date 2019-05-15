@@ -1,0 +1,278 @@
+CREATE TABLE `Address` (
+  `address_id` int(11) NOT NULL AUTO_INCREMENT,
+  `address1` varchar(50) DEFAULT NULL,
+  `address2` varchar(50) DEFAULT NULL,
+  `email` varchar(30) DEFAULT NULL,
+  `fax` varchar(20) DEFAULT NULL,
+  `telephone1` varchar(30) DEFAULT NULL,
+  `telephone2` varchar(30) DEFAULT NULL,
+  `mobile1` varchar(30) DEFAULT NULL,
+  `mobile2` varchar(30) DEFAULT NULL,
+  `mobile3` varchar(30) DEFAULT NULL,
+  `city_code` int(11) NOT NULL,
+  `state_code` int(11) NOT NULL,
+  `country_code` int(11) NOT NULL,
+  PRIMARY KEY (`address_id`),
+  KEY `city_code` (`city_code`),
+  KEY `state_code` (`state_code`),
+  KEY `country_code` (`country_code`),
+  CONSTRAINT `Address_ibfk_1` FOREIGN KEY (`city_code`) REFERENCES `City` (`city_code`),
+  CONSTRAINT `Address_ibfk_2` FOREIGN KEY (`state_code`) REFERENCES `State` (`state_code`),
+  CONSTRAINT `Address_ibfk_3` FOREIGN KEY (`country_code`) REFERENCES `Country` (`country_code`)
+);
+
+CREATE TABLE `Bank` (
+  `bank_id` int(11) NOT NULL AUTO_INCREMENT,
+  `bank_name` varchar(60) NOT NULL,
+  `branch_name` varchar(60) NOT NULL,
+  `acc_number` bigint(20) NOT NULL,
+  `ifsc_code` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`bank_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Brand` (
+  `brand_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`brand_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `City` (
+  `city_code` int(11) NOT NULL,
+  `city_name` varchar(50) DEFAULT NULL,
+  `state_code` int(11) NOT NULL,
+  PRIMARY KEY (`city_code`),
+  KEY `state_code` (`state_code`),
+  CONSTRAINT `City_ibfk_1` FOREIGN KEY (`state_code`) REFERENCES `State` (`state_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Country` (
+  `country_code` int(11) NOT NULL,
+  `country_name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`country_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Customer` (
+  `customer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `gst_number` varchar(20) DEFAULT NULL,
+  `cin_number` varchar(30) DEFAULT NULL,
+  `pan_number` varchar(30) DEFAULT NULL,
+  `loyalty` varchar(30) DEFAULT NULL,
+  `address_id` int(11) NOT NULL,
+  `bank_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`customer_id`),
+  KEY `address_id` (`address_id`),
+  KEY `bank_id` (`bank_id`),
+  CONSTRAINT `Customer_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `Address` (`address_id`),
+  CONSTRAINT `Customer_ibfk_2` FOREIGN KEY (`bank_id`) REFERENCES `Bank` (`bank_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Freight` (
+  `freight_id` int(11) NOT NULL AUTO_INCREMENT,
+  `destination` varchar(60) DEFAULT NULL,
+  `tracking_number` varchar(40) DEFAULT NULL,
+  `terms` varchar(40) DEFAULT NULL,
+  `booking_number` varchar(40) DEFAULT NULL,
+  `booking_date` date DEFAULT NULL,
+  `estimated_date` date DEFAULT NULL,
+  `arrival_date` date DEFAULT NULL,
+  `amount` decimal(10,0) DEFAULT NULL,
+  `transport_mode` varchar(40) DEFAULT NULL,
+  `transporter_name` varchar(60) DEFAULT NULL,
+  `driver_name` varchar(60) DEFAULT NULL,
+  `driver_phone` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`freight_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `FreightLocal` (
+  `freightlocal_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pickup_location` varchar(60) DEFAULT NULL,
+  `destination` varchar(60) DEFAULT NULL,
+  `transport_mode` varchar(60) DEFAULT NULL,
+  `amount` decimal(10,0) DEFAULT NULL,
+  `driver_name` varchar(50) DEFAULT NULL,
+  `driver_number` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`freightlocal_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Mode` (
+  `mode_id` int(11) NOT NULL AUTO_INCREMENT,
+  `mode_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`mode_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Payment` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `description` varchar(45) DEFAULT NULL,
+  `amount` varchar(20) DEFAULT NULL,
+  `payment_date` date NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `type_id` int(11) NOT NULL,
+  `mode_id` int(11) NOT NULL,
+  PRIMARY KEY (`payment_id`),
+  KEY `order_id` (`order_id`),
+  KEY `type_id` (`type_id`),
+  KEY `mode_id` (`mode_id`),
+  CONSTRAINT `Payment_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `PurchaseOrder` (`purchaseorder_id`),
+  CONSTRAINT `Payment_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `SalesOrder` (`salesorder_id`),
+  CONSTRAINT `Payment_ibfk_3` FOREIGN KEY (`type_id`) REFERENCES `PaymentType` (`paymenttype_id`),
+  CONSTRAINT `Payment_ibfk_4` FOREIGN KEY (`mode_id`) REFERENCES `Mode` (`mode_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `PaymentType` (
+  `paymenttype_id` int(11) NOT NULL AUTO_INCREMENT,
+  `type_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`paymenttype_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Product` (
+  `product_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `hsn_code` int(11) NOT NULL,
+  `model_number` varchar(45) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `purchase_price` decimal(10,0) DEFAULT NULL,
+  `sales_price` decimal(10,0) DEFAULT NULL,
+  `tax` int(11) DEFAULT NULL,
+  `brand_id` int(11) NOT NULL,
+  PRIMARY KEY (`product_id`),
+  KEY `brand_id` (`brand_id`),
+  CONSTRAINT `Product_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `Brand` (`brand_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `PurchaseItem` (
+  `purchaseitem_id` int(11) NOT NULL AUTO_INCREMENT,
+  `line_number` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `discount` int(11) DEFAULT NULL,
+  `product_id` int(11) NOT NULL,
+  `purchaseorder_id` int(11) NOT NULL,
+  `purchase_price` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`purchaseitem_id`),
+  KEY `product_id` (`product_id`),
+  KEY `purchaseorder_id` (`purchaseorder_id`),
+  CONSTRAINT `PurchaseItem_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`),
+  CONSTRAINT `PurchaseItem_ibfk_2` FOREIGN KEY (`purchaseorder_id`) REFERENCES `PurchaseOrder` (`purchaseorder_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `PurchaseOrder` (
+  `purchaseorder_id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_ordered` date NOT NULL,
+  `date_delivered` date NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `supplier_invoice_number` varchar(60) DEFAULT NULL,
+  `supplier_invoice_date` date DEFAULT NULL,
+  `status_id` int(11) NOT NULL,
+  `freight_id` int(11) DEFAULT NULL,
+  `freightlocal_id` int(11) DEFAULT NULL,
+  `payment_status` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`purchaseorder_id`),
+  KEY `supplier_id` (`supplier_id`),
+  KEY `status_id` (`status_id`),
+  KEY `freightlocal_id` (`freightlocal_id`),
+  KEY `freight_id` (`freight_id`),
+  CONSTRAINT `PurchaseOrder_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `Supplier` (`supplier_id`),
+  CONSTRAINT `PurchaseOrder_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `Status` (`status_id`),
+  CONSTRAINT `PurchaseOrder_ibfk_3` FOREIGN KEY (`freightlocal_id`) REFERENCES `FreightLocal` (`freightlocal_id`),
+  CONSTRAINT `PurchaseOrder_ibfk_4` FOREIGN KEY (`freight_id`) REFERENCES `Freight` (`freight_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `SalesItem` (
+  `salesitem_id` int(11) NOT NULL AUTO_INCREMENT,
+  `line_number` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `discount` int(11) DEFAULT NULL,
+  `stock_id` int(11) NOT NULL,
+  `salesorder_id` int(11) NOT NULL,
+  `sales_price` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`salesitem_id`),
+  KEY `stock_id` (`stock_id`),
+  KEY `salesorder_id` (`salesorder_id`),
+  CONSTRAINT `SalesItem_ibfk_1` FOREIGN KEY (`stock_id`) REFERENCES `Stock` (`stock_id`),
+  CONSTRAINT `SalesItem_ibfk_2` FOREIGN KEY (`salesorder_id`) REFERENCES `SalesOrder` (`salesorder_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `SalesOrder` (
+  `salesorder_id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_ordered` date NOT NULL,
+  `date_confirmed` date NOT NULL,
+  `date_delivered` date NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `status_id` int(11) NOT NULL,
+  `payment_status` tinyint(4) DEFAULT NULL,
+  `freight_id` int(11) DEFAULT NULL,
+  `freightlocal_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`salesorder_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `freightlocal_id` (`freightlocal_id`),
+  KEY `freight_id` (`freight_id`),
+  CONSTRAINT `SalesOrder_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `Customer` (`customer_id`),
+  CONSTRAINT `SalesOrder_ibfk_2` FOREIGN KEY (`freightlocal_id`) REFERENCES `FreightLocal` (`freightlocal_id`),
+  CONSTRAINT `SalesOrder_ibfk_3` FOREIGN KEY (`freight_id`) REFERENCES `Freight` (`freight_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Self` (
+  `self_id` int(11) NOT NULL AUTO_INCREMENT,
+  `company_name` varchar(50) DEFAULT NULL,
+  `address_id` int(11) NOT NULL,
+  `bank_id` int(11) NOT NULL,
+  PRIMARY KEY (`self_id`),
+  KEY `address_id` (`address_id`),
+  KEY `bank_id` (`bank_id`),
+  CONSTRAINT `Self_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `Address` (`address_id`),
+  CONSTRAINT `Self_ibfk_2` FOREIGN KEY (`bank_id`) REFERENCES `Bank` (`bank_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `State` (
+  `state_code` int(11) NOT NULL,
+  `state_name` varchar(50) DEFAULT NULL,
+  `country_code` int(11) NOT NULL,
+  PRIMARY KEY (`state_code`),
+  KEY `country_code` (`country_code`),
+  CONSTRAINT `State_ibfk_1` FOREIGN KEY (`country_code`) REFERENCES `Country` (`country_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Status` (
+  `status_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`status_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Stock` (
+  `stock_id` int(11) NOT NULL AUTO_INCREMENT,
+  `quantity` int(11) DEFAULT '0',
+  `last_sale_date` date DEFAULT NULL,
+  `sale_price` decimal(10,0) DEFAULT NULL,
+  `purchase_price` decimal(10,0) DEFAULT NULL,
+  `product_id` int(11) NOT NULL,
+  PRIMARY KEY (`stock_id`),
+  UNIQUE KEY `product_id` (`product_id`),
+  CONSTRAINT `Stock_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `StockAdjustment` (
+  `adjustment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `purchase_date` date DEFAULT NULL,
+  `old_quantity` int(11) DEFAULT NULL,
+  `reason` varchar(60) DEFAULT NULL,
+  `stock_id` int(11) NOT NULL,
+  PRIMARY KEY (`adjustment_id`),
+  KEY `stock_id` (`stock_id`),
+  CONSTRAINT `StockAdjustment_ibfk_1` FOREIGN KEY (`stock_id`) REFERENCES `Stock` (`stock_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Supplier` (
+  `supplier_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `gst_number` varchar(20) DEFAULT NULL,
+  `cin_number` varchar(30) DEFAULT NULL,
+  `pan_number` varchar(30) DEFAULT NULL,
+  `rating` varchar(30) DEFAULT NULL,
+  `address_id` int(11) NOT NULL,
+  `bank_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`supplier_id`),
+  KEY `address_id` (`address_id`),
+  KEY `bank_id` (`bank_id`),
+  CONSTRAINT `Supplier_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `Address` (`address_id`),
+  CONSTRAINT `Supplier_ibfk_2` FOREIGN KEY (`bank_id`) REFERENCES `Bank` (`bank_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
